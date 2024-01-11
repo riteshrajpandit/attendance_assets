@@ -1,0 +1,84 @@
+class AttendanceSheetScreen extends StatefulWidget {
+  @override
+  _AttendanceSheetScreenState createState() => _AttendanceSheetScreenState();
+}
+
+class _AttendanceSheetScreenState extends State<AttendanceSheetScreen> {
+  List<Student> students = List.generate(
+    11,
+    (index) => Student(name: 'Jhon Doe', isPresent: true),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Attendance for 5th Jan, 2024'),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Science & Technology - Bachelor in Computer Engineering - 5th Semester - Morning',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: students.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: Text('${index + 1}.', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text(students[index].name),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.check, color: students[index].isPresent ? Colors.green : Colors.grey),
+                        onPressed: () {
+                          setState(() {
+                            students[index].isPresent = true;
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, color: !students[index].isPresent ? Colors.red : Colors.grey),
+                        onPressed: () {
+                          setState(() {
+                            students[index].isPresent = false;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            minimumSize: Size(double.infinity, 50), // double.infinity is the width and 50 is the height
+          ),
+          onPressed: () {
+            // Logic to handle when 'Done' is pressed
+          },
+          child: Text('Done'),
+        ),
+      ),
+    );
+  }
+}
+
+class Student {
+  String name;
+  bool isPresent;
+
+  Student({required this.name, this.isPresent = false});
+}
