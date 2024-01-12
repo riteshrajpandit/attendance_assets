@@ -1,0 +1,75 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+// ... other imports ...
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _rememberMe = false;
+
+  Future<void> _login() async {
+    setState(() => _isLoading = true);
+    
+    try {
+      var dio = Dio();
+      final response = await dio.post(
+        'http://your-api-url/api/login',
+        data: {
+          'email': _emailController.text,
+          'password': _passwordController.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // If the server returns a successful response, navigate to the home screen
+        Navigator.pushReplacementNamed(context, '/bottomNavigation');
+      } else {
+        // Handle server errors
+        _showErrorDialog('Invalid credentials or server error');
+      }
+    } on DioError catch (e) {
+      // Handle errors on calling the API
+      _showErrorDialog(e.message);
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // ... your existing build method ...
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+}
